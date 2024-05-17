@@ -1,0 +1,15 @@
+
+/* Class = "UITabBarItem"; title = "즐겨찾기"; ObjectID = "3IX-PU-Hbh"; */
+"3IX-PU-Hbh.title" = "즐겨찾기";
+
+/* Class = "UITabBarItem"; title = "검색"; ObjectID = "JpY-jh-n54"; */
+"JpY-jh-n54.title" = "검색";
+
+/* Class = "UITabBarItem"; title = "설정"; ObjectID = "KX8-ey-OhY"; */
+"KX8-ey-OhY.title" = "설정";
+
+/* Class = "UITabBarItem"; title = "모아보기"; ObjectID = "RZ8-lL-d9G"; */
+"RZ8-lL-d9G.title" = "모아보기";
+
+/* Class = "UITabBarItem"; title = "검색"; ObjectID = "njc-8v-wFF"; */
+"njc-8v-wFF.title" = "검색";

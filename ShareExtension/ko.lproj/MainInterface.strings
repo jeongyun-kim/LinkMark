@@ -1,0 +1,21 @@
+
+/* Class = "UILabel"; text = "(0/500)"; ObjectID = "1Aa-4U-m2i"; */
+"1Aa-4U-m2i.text" = "(0/500)";
+
+/* Class = "UILabel"; text = "태그"; ObjectID = "8xx-f0-frW"; */
+"8xx-f0-frW.text" = "태그";
+
+/* Class = "UILabel"; text = "메모"; ObjectID = "9vA-qN-6HC"; */
+"9vA-qN-6HC.text" = "메모";
+
+/* Class = "UITextField"; placeholder = "URL을 입력해주세요"; ObjectID = "S44-Qc-l4e"; */
+"S44-Qc-l4e.placeholder" = "URL을 입력해주세요";
+
+/* Class = "UILabel"; text = "Label"; ObjectID = "VDG-ME-dbO"; */
+"VDG-ME-dbO.text" = "Label";
+
+/* Class = "UILabel"; text = "제목"; ObjectID = "W2J-fi-Kh0"; */
+"W2J-fi-Kh0.text" = "제목";
+
+/* Class = "UIViewController"; title = "URL 추가"; ObjectID = "j1y-V4-xli"; */
+"j1y-V4-xli.title" = "URL 추가";

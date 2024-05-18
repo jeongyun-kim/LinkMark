@@ -111,12 +111,7 @@ class HomeViewController: UIViewController{
         }
         // URL리스트 컬렉션뷰 구성 및 출력
         configureCollectionView()
-        let animation = ms.lottieView(view: self.view, name: "home_loading")
-        animation.isHidden = false
-        animation.play()
         bind()
-        animation.isHidden = true
-        animation.stop()
         
     }
 

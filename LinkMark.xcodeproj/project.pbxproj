@@ -51,7 +51,6 @@
 		E076AD542B4D809F00CA03D4 /* Search.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E076AD532B4D809F00CA03D4 /* Search.storyboard */; };
 		E076AD562B4D83D000CA03D4 /* Detail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E076AD552B4D83D000CA03D4 /* Detail.storyboard */; };
 		E076AD582B4D83E000CA03D4 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E076AD572B4D83E000CA03D4 /* DetailViewController.swift */; };
-		E08ED2272BDF9AE300060081 /* home_loading.json in Resources */ = {isa = PBXBuildFile; fileRef = E08ED2262BDF9AE300060081 /* home_loading.json */; };
 		E098D0942B8DD97100E2EFA4 /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E098D0932B8DD97100E2EFA4 /* Tag.swift */; };
 		E099200D2BDF9F65006E3539 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = E099200C2BDF9F65006E3539 /* Toast */; };
 		E0A959802B54254F002401C1 /* AddUrl.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0A9597F2B54254F002401C1 /* AddUrl.storyboard */; };
@@ -174,7 +173,6 @@
 		E076AD532B4D809F00CA03D4 /* Search.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Search.storyboard; sourceTree = "<group>"; };
 		E076AD552B4D83D000CA03D4 /* Detail.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Detail.storyboard; sourceTree = "<group>"; };
 		E076AD572B4D83E000CA03D4 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		E08ED2262BDF9AE300060081 /* home_loading.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = home_loading.json; path = ../../../../../Downloads/home_loading.json; sourceTree = "<group>"; };
 		E098D0932B8DD97100E2EFA4 /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		E0A9597F2B54254F002401C1 /* AddUrl.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = AddUrl.storyboard; sourceTree = "<group>"; };
 		E0A959812B54255C002401C1 /* AddUrlViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUrlViewController.swift; sourceTree = "<group>"; };
@@ -304,7 +302,6 @@
 				E0335F9D2B4BD3B7004260FE /* AppDelegate.swift */,
 				E0335F9F2B4BD3B7004260FE /* SceneDelegate.swift */,
 				E0D333092B94B72F00C37B69 /* Assets.xcassets */,
-				E08ED2262BDF9AE300060081 /* home_loading.json */,
 				E0D333212B9F3E7600C37B69 /* loading.json */,
 				E0335FA82B4BD3B8004260FE /* LaunchScreen.storyboard */,
 				E0335FAB2B4BD3B8004260FE /* Info.plist */,
@@ -652,7 +649,6 @@
 				E0D3330A2B94B72F00C37B69 /* Assets.xcassets in Resources */,
 				E0FEEA6B2BD12D5F00B904EA /* TagManage.storyboard in Resources */,
 				E076AD502B4D78B600CA03D4 /* BookMark.storyboard in Resources */,
-				E08ED2272BDF9AE300060081 /* home_loading.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -128,7 +128,7 @@ class SearchViewController: UIViewController {
     private func setupSerchBarAndNavi() {
         searchController.hidesNavigationBarDuringPresentation = false // 검색하는동안 네비게이션 보이게
         searchController.searchBar.placeholder = "검색어를 입력해주세요" // 검색어 입력칸에 안내 문구
-        searchController.searchBar.becomeFirstResponder() // 검색창으로 왔을 때, 오토포커스
+        searchController.searchBar.autocapitalizationType = .none // 영어 첫글자 대문자 X
         self.navigationItem.searchController = searchController
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self

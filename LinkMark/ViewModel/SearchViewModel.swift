@@ -34,8 +34,8 @@ final class SearchViewModel {
     /// - Returns: 검색 결과 상태 (없으면 false / 있으면 true 반환)
     func searchItems(keyword: String) -> Bool {
         let saveData = Array(realm.objects(UrlList.self))
-        let urlFilteredData = Set(saveData.filter{ $0.url.split(separator: ".")[1].contains(keyword.lowercased())})
-        let titleOrMemoFilteredData = Set(saveData.filter {$0.title.contains(keyword.lowercased()) || $0.memo?.contains(keyword.lowercased()) != nil})
+        let urlFilteredData = Set(saveData.filter { URL(string: $0.url)!.host()!.contains(keyword) })
+        let titleOrMemoFilteredData = Set(saveData.filter { $0.title.lowercased().contains(keyword) || $0.title.contains(keyword) ||  $0.memo!.lowercased().contains(keyword) || $0.memo!.contains(keyword) })
         let result = Array(urlFilteredData.union(titleOrMemoFilteredData))
         
         if result.isEmpty {

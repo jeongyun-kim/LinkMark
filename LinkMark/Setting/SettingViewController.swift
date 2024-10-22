@@ -26,7 +26,7 @@ class SettingViewController: UIViewController {
         manualBtn.tintColor = .gray
         navigationItem.backButtonTitle = ""
         navigationController?.navigationBar.tintColor = .black
-        versionLabel.text = "버전 1.1.1"
+        versionLabel.text = "버전 1.1.2"
     }
     
     /// **태그 관리 버튼 눌렀을 때**

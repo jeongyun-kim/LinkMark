@@ -1,15 +1,15 @@
 # 링마크 - 링크 모음 앱 
-<a href="https://apps.apple.com/kr/app/팝업로그/id6720723835">
+<a href="https://apps.apple.com/kr/app/%EB%A7%81%EB%A7%88%ED%81%AC/id6499511244">
 	<img src="https://github.com/user-attachments/assets/dd8e6470-7966-49e3-ad87-0de5726221f8" width="120"/>
 </a>
 
 ### ✏️ 개발 의도
 
-팝업스토어를 다녀와 기록하는 용도로 많은 사람들이 블로그와 인스타그램 등을 이용하고 있습니다. 
+인스타그램, 사파리, X 등 다양한 플랫폼에서 우리는 북마크를 이용하고 있습니다.
 <br>
-하지만 어떤 분야의 팝업을 다녀왔고 이번 달, 혹은 저번달에 얼마나 자주 팝업스토어를 다녀왔는지 기록들을 한눈에 확인하기 어렵다는 단점이 있다고 생각했습니다. 
+하지만 이러한 북마크들은 각 사이트 또는 앱에서 확인할 수 있기 때문에 한곳에서 빠르게 조회하고 관리할 수 없다는 불편함이 존재합니다.
 <br>
-그리하여 저는 공유 목적이 아닌 오로지 개인의 기록에 중점을 두고 다녀온 팝업스토어에 대해 후기를 작성하고 이를 캘린더와 태그를 통해 보다 쉽게 조회하고 관리할 수 있는 앱을 개발하고자 하였습니다.
+이러한 불편함을 해결해보고자 한곳에서 저장해두고 싶은 링크들을 관리하는 앱을 개발하게 되었습니다.
 
 ---
 
@@ -34,18 +34,18 @@
 
 ### ✅ 개발환경
 
-- iOS16.4+
-- 1인 개발 | 2024.09.16~09.30
+- iOS16+
+- 1인 개발 | 2024.01.10 ~ 04.30
 
 ---
 
 ### 👩🏼‍💻 주요 기술
 
-- UI : UIKit, Storyboard, 
+- UI : UIKit, Storyboard, SnapKit, Kingfisher, Lottie, Toast
 - Database : Realm
 - Reactive : Combine
 - Design Pattern: MVVM
-- etc: Link Presentation, Share Extension, Swift Concurrency
+- etc: Link Presentation, Share Extension, Swift Concurrency, GCD
 
 ---
 
@@ -62,8 +62,16 @@
 
 ### 🧐 개발 포인트
 
-- 사용성 향상을 위한 필수값에 대한 검증 및 명확한 표기
-
+- 타깃(App, Share Extension) 간 Realm 데이터 공유를 위한 App Group 활용
+- CompletionHandler 기반 코드 Continuation 활용해 Concurrency 환경으로 변경
+- 링크 제목, 썸네일을 위한 LinkPresentation 활용
+- 사용자의 이벤트 처리를 위해 Combine 활용 
+- 링크 불러오는동안 Lottie를 활용한 로딩 이미지 표출
+- 사용성 향상을 위한 필수값(링크, 제목)에 대한 검증 및 명확한 표기
+- 토스트 메시지를 이용한 피드백
+- 링크 저장, 삭제 실시간 반영
+- 메모 글자수 제한 
+- 태그, 링크 목록의 레이아웃을 위한 Compositional CollectionView + Diffable DataSource 활용 
 
 ---
 
@@ -229,8 +237,3 @@ private func getUIImage(_ pickerItem: PhotosPickerItem?, completionHandler: @esc
 사용자의 편의성을 더욱 생각하려고 노력하였던 앱이라고 생각합니다. 그리하여 출시 전후로 받은 동료분들의 피드백을 바탕으로 1차 업데이트를 진행하기도 하였습니다.  개발자이기는 하지만 언제나 사용자의 관점에서 바라보도록 더욱 노력해야할 것 같습니다. 이후에는 태그를 통한 기록 모아보기, 다크모드 대응 등 다양한 기능을 추가함으로써 앱의 활용성을 높이고 싶습니다.
 <br>
 
-**- TCA를 활용한 리팩토링의 필요성**
-<br>
-SwiftUI + MVVM을 적용해보며 UIKit와 달리 (SwiftUI의 DataBinding의 흐름을 고려하였을 때) 이러한 방식이 적합한 것인지에 대한 의문이 들었던 것 같습니다. 이후에는 단방향 데이터 흐름구조의 TCA에 대해 학습하여 리팩토링을 진행해보고 싶습니다.
-
-<br>

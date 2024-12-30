@@ -16,17 +16,11 @@
 ### ⭐️ 스크린샷
 
 <table>
-<tr>
-  <td>메인</td>
-  <td>검색</td>
-  <td>태그 관리</td>
-  <td>공유하기</td>
-</tr>
 <tr line-height:0>
-  <td><img src="" width="120" height="250"></td>
-  <td><img src="" width="120" height="250"></td>
-  <td><img src="" width="120" height="250"></td>
-  <td><img src="" width="120" height="250"></td>
+  <td><img src="https://github.com/user-attachments/assets/0d74dc1a-c296-4484-b007-ce38c7df48b8" width="150" height="280"></td>
+  <td><img src="https://github.com/user-attachments/assets/6eea3d4d-7031-43a1-bad6-96f19eecb263" width="150" height="280"></td>
+  <td><img src="https://github.com/user-attachments/assets/c77fcc59-949c-4bcf-abbc-1bb5f558e755" width="150" height="280"></td>
+  <td><img src="https://github.com/user-attachments/assets/626d4ca6-d114-42a5-ae38-c94b9223ff86" width="150" height="280"></td>
 </tr>
 </table>
 

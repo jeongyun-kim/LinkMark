@@ -58,176 +58,157 @@
 
 - 타깃(App, Share Extension) 간 Realm 데이터 공유를 위한 App Group 활용
 - CompletionHandler 기반 코드 Continuation 활용해 Concurrency 환경으로 변경
+- 공유하기를 위한 Share Extension 활용
 - 링크 제목, 썸네일을 위한 LinkPresentation 활용
 - 사용자의 이벤트 처리를 위해 Combine 활용 
 - 링크 불러오는동안 Lottie를 활용한 로딩 이미지 표출
 - 사용성 향상을 위한 필수값(링크, 제목)에 대한 검증 및 명확한 표기
-- 토스트 메시지를 이용한 피드백
-- 링크 저장, 삭제 실시간 반영
-- 메모 글자수 제한 
+- 토스트 메시지를 이용한 이벤트 결과 피드백
+- 링크 저장, 삭제 등 실시간 반영
 - 태그, 링크 목록의 레이아웃을 위한 Compositional CollectionView + Diffable DataSource 활용 
 
 ---
 
 ### 🚨 트러블슈팅
 
-**✓ 향상된 사용자 경험을 위한 데이터 실시간 반영 중 FSCalendar의 Cell이 실시간 업데이트 되지않는 문제**
+**✓ 링크 썸네일을 받아오기 위한 메서드를 continuation을 활용해 GCD -> Concurrency 환경으로 변경**
 
 **- 문제점**
 <br>
-SwiftUI의 경우 뷰에서 무언가 변화가 생겼을 때, 뷰를 새로 렌더링 하는 방식을 가지고 있습니다. 하지만 사용자의 기록 현황을 확인할 수 있는 CalendarView의 경우 UIViewController를 감싸고 있는 형태로, 기록이 생성되거나 삭제되더라도 `updateUIVIewController()`에 별도의 코드를 작성해 주지 않아 변경사항이 반영되지 않는 문제가 발생하였습니다.
+imageProvider 또는 iconProvider에서 특정 데이터 타입의 데이터를 가져오는 메서드인 loadDataRepresentation은 completionHandler로 결과값을 반환하는 함수였습니다. 하지만 받아오는 데이터를 받아와 UIImage로 변경해주는 추가적인 단계가 있어 이를 순차적으로 처리하기 위해서는 Swift Concurrency 환경의 async-await을 활용해야했습니다.
 
 **- 해결**
 <br>
-이러한 문제를 해결하기 위해 `updateUIVIewController()`의 호출 시점마다 Calendar를 갱신해 주도록 처리하였습니다. 하지만 이는 예상보다도 많은 호출이 일어나 불필요한 애니메이션이 보여짐과 동시에 동기화가 불필요한 시점에도 갱신이 일어나며 쓸데없는 자원이 낭비되는 또 다른 문제가 발생하였습니다. 
-<br>
-그리하여 데이터가 변경되거나 삭제되었을 때에만 Reload 하도록 UIViewControllerRepresentable 내에 @Binding 값을 정의해 주어 캘린더를 업데이트해줘야 하는 시점을 Bool 값으로 구분해 주고자 하였습니다. 그리고 현재 값이 true 라면 Reload 해주고, 바로 다음에 불필요한 갱신이 일어나지않도록 값을 변경해 주는 과정을 거쳤습니다. 이를 통해 필요한 시점에만 변경사항을 반영해 줄 수 있었습니다. 
+그리하여 completionHandler를 continuation을 이용해 Concucrrency 환경으로 변경하고자 결과값과 에러를 모두 반환할 수 있는 withCheckedThrowingContinuation를 활용해주었습니다.
 
 ```swift
-struct FSCalendarViewControllerWrapper: UIViewControllerRepresentable {
-    @ObservedObject var vm: CalendarViewModel
-    @Binding var detent: PresentationDetent
-    @Binding var reloadCalendar: Bool
-
-    func makeUIViewController(context: Context) -> some UIViewController {
-        FSCalendarViewController(vm: vm)
-    }
-    
-    // - BottomSheet 높이 변할 때마다 달력의 형태도 변경
-    // - 상세뷰에서 편집 후 이미지 변경 시, 바로 썸네일 반영되도록 calendar.reloadData()
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        guard let vc = uiViewController as? FSCalendarViewController else { return }
-        // Calendar 갱신 여부 보내기 
-        vc.reloadCalendar(reloadCalendar) 
-	      ... 
-    }
-    
-    class FSCalendarViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
-        init(vm: CalendarViewModel) {
-        ...
-		    // Calendar Reload 갱신해야한다면 Reload -> Trigger false 처리  
-		    func reloadCalendar(_ reload: Bool) {
-		            DispatchQueue.main.async {
-		                if reload {
-		                    self.calendar.reloadData()
-		                    self.vm.action(.reloadCalendarTrigger(reload: false))
-		                }
-		            }
-		      }
-}
-```
-<br>
-
-**✓ FullScreenCover로 감싸진 View로의 데이터 전달** 
-
-**- 문제점**
-<br>
-특정 기록을 선택하였을 때, FullScreenCover로 설정된 뷰가 present되며 해당 기록의 상세정보를 확인할 수 있어야하는 상황에서 어떤 기록을 선택하든 보여지고 있는 기록들 중 첫번째 기록에 대한 상세정보만이 표출되는 문제가 발생하였습니다.
-<br>
-
-**- 해결**
-<br>
-원인을 찾기 위해 우선 데이터 전달이 제대로 일어나는지 확인해보았습니다. 그리고 `onTapGesutre()`에서 전달 데이터를 출력해본 결과, 선택한 기록의 데이터가 출력되었고 FullScreenCover 내 DetailView는 해당 데이터가 아닌 첫번째 기록의 데이터를 전달받고 있음을 알 수 있었습니다. 즉, 탭을 했을 때 제대로 된 데이터가 선택되고 있지만 FullCoverScreen 내 뷰가 가지는 데이터는 변화하지않고 첫번째 데이터로 고정되어 생기는 문제라고 판단하게 되었습니다.
-<br>
-그리하여 selectedLog라는 State 변수를 두어 기록을 선택할 때마다 DetailView로 전달해줄 기록으로 변경하고 이를 DetailView로 전달하도록 수정하였습니다. 
-
-```swift
-struct BottomSheetView: View {
-    @ObservedObject var vm: CalendarViewModel
-    @State private var isPresentingFullCover = false
-    @State private var selectedLog: Log = Log(title: "", content: "", place: nil, visitDate: Date())
-    
-    var body: some View {
-        GeometryReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 30) {
-                    ForEach(vm.output.logList, id: \.id) { item in
-                        rowView(proxy.size.width, item: item)
-                            .onTapGesture {
-                                selectedLog = item
-                                isPresentingFullCover.toggle()
-                            }
-                    }
+extension NSItemProvider {
+    func loadDataRepresentation(for type: UTType) async throws -> Data {
+        return try await withCheckedThrowingContinuation { continuation in
+            _ = self.loadDataRepresentation(for: type) { data, error in
+                if let data {
+                    // 불러온 데이터 return 
+                    continuation.resume(returning: data)
+                } else if let error {
+                    // 에러 던지기
+                    continuation.resume(throwing: error)
                 }
-                .padding(.horizontal)
             }
         }
-        .fullScreenCover(isPresented: $isPresentingFullCover, content: {
-            LazyNavigationView(DetailView(log: $selectedLog))
-        })
-        .padding(.top, 32)
-        .background(Resources.Colors.lightOrange)
     }
 }
 ```
-<br>
 
-**✓ Filemanager 내 이미지 저장을 위한 UIImage 활용**
+**✓ Extension Context 내 URL 가져와 앱에 반영하기**
 
 **- 문제점**
 <br>
-UIKit에서는 UIImage → Data 를 통해 Filemanager에 이미지를 저장할 수 있었지만 SwiftUI에서는 Image를 FileManager로 저장하는 방법을 찾지 못하였습니다. 
-그리하여 Image → UIImage 방식으로 이미지를 변환한 후, 저장 시 해당 UIImage를 활용하려고 하였으나 본래 이미지의 크기가 아닌 임의로 설정해준 크기로만 이미지를 변환할 수 있다는 또다른 문제가 있었습니다.
+공유하기를 통해 해당 웹페이지의 URL을 앱으로 가져온 직후, URL의 메타데이터를 가져오도록 구현해주고 싶었습니다.
+
+**- 해결**
+<br>
+공유하기 시 떠오르는 화면이 Extension Context라는 것을 알게되었고 내부의 아이템들을 돌면서 URL을 찾고 가져와 앱에 반영해주면 되는 무제였습니다. 이 때, itemProvider의 경우 비동기적으로 작동하기 때문에 URL을 가져와 UI변화를 줄 때에 DispatchQueue.main.async를 이용해 UI 업데이트가 이루어지도록 처리하였습니다.
 
 ```swift
-extension Image {
-    func asUIImage() -> UIImage? {
-        // SwiftUI View를 UIKit의 UIView로 변환할 뷰
-        let controller = UIHostingController(rootView: self)
-
-        // 뷰의 크기 설정 
-        let size = controller.sizeThatFits(in: .init(width: 300, height: 300)) // 원하는 크기로 조정
-        controller.view.frame = CGRect(origin: .zero, size: size)
-
-        // 뷰의 레이어가 그려지게 
-        UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-        // 화면 업데이트 후 그려주기
-        controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
-        let uiImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return uiImage
+func getUrl() {
+    let extensionItems = extensionContext?.inputItems as! [NSExtensionItem]
+    for extensionItem in extensionItems {
+        if let itemProviders = extensionItem.attachments {
+            for itemProvider in itemProviders {
+                if itemProvider.hasItemConformingToTypeIdentifier(UTType.url.identifier as String) {
+                    itemProvider.loadItem(forTypeIdentifier: UTType.url.identifier as String, options: nil) { url, error in
+                        if let shareUrl = url as? URL {
+                            let url = shareUrl.absoluteString // 현재 웹 페이지의 String 형식
+                            DispatchQueue.main.async { [unowned self] in
+                                self.urlTextField.text = url // URL칸에 현재 웹 페이지 주소 넣어주기
+                                self.urlTextField.tintColor = .systemGray // URL 글씨 회색으로
+                                self.urlTextField.isEnabled = false // URL 수정 불가
+                                self.urlTextField.textColor = .systemGray
+                                self.loadBtn.isEnabled = false // 링크 데이터 불러오기 불가
+                                let encodingUrlString = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+                                let encodingUrl = URL(string: encodingUrlString)!// 문자열을 url 형태로 변환
+                                loadItems(url: encodingUrl)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 ```
+
+**✓ 링크 썸네일이 image 또는 icon이기에 생기는 예외처리**
+
+**- 문제점**
+<br>
+처음에는 링크의 썸네일은 당연히 imageProvider로 불러올 수 있을거라고 생각했습니다. 하지만 어떠한 링크들의 경우, imageProvider가 아닌 iconProvider로 불러와야하는 경우들이 있었습니다.
+
+**- 해결**
+<br>
+이를 고려하여 썸네일을 받아오는 단계를 단순히 imageProvider를 이용하는 것이 아닌 1차는 image, 2차는 icon 형식으로 변경해주었습니다.
+<br>
+그리하여 1차적으로 메타데이터에 썸네일이 image 형태로 존재한다면 해당 단계에서 썸네일을 반영해주었고, 이 때에 썸네일이 없는 모든 경우를 에러로 분류하여 icon 형태로 받아오는 단계를 거치도록 하였습니다.
+최종적으로 iconProvider로도 썸네일을 받아오지못한다면 기본 이미지가 사용되도록 하였습니다. 
+
+```swift
+do {
+  let thumbnail = try await LPLoader().thumbnail(metadata: metadata)
+  self.thumbnailImageView.image = thumbnail
+} catch {
+  do {
+    let icon = try await LPLoader().favicon(metadata: metadata)
+    self.thumbnailImageView.image = icon
+   } catch {
+    switch error {
+       case LPLoaderCase.faviconCouldNotBeLoaded:
+	  ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
+       case LPLoaderCase.faviconDataInvalid:
+          ms.alert(for: "불러올 썸네일이 없어요", vc: self)
+       default:
+           ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
+    }
+  }
+} 
+```
+<br>
+
+**✓ URL 인코딩** 
+
+**- 문제점**
+<br>
+URL을 입력 후 유효성 검증을 거치는 과정에서 "abc"같은 문자는 괜찮지만 "ㅇㄹㅁㄴ"같은 한글을 입력했을 때, 런타임 에러가 발생하였습니다.
 <br>
 
 **- 해결**
 <br>
-그리하여 PhotosPicker로 선택한 이미지가 변경될 때마다 PhotosPickerItem을 Data로 1차 변환하고 이를 UIImage로 2차 변환해주는 과정을 거쳐 각 이미지의 크기에 맞는 UIImage를 가져올 수 있었습니다.
-
-그리고 뷰에서는 해당 UIImage를 사용하여 보여준 후, 사용자가 기록을 저장할 때에 그 UIImage를 활용해 이전과 같은 방식으로 Filemanager 내 이미지를 저장해줄 수 있었습니다.
+한글을 URL로 변환할 때 생기는 문제라고 생각하여 관련 코드에 print를 통해 디버깅을 진행하였고, 한글 또는 공백만이 포함된 경우 URL의 변환값이 nil로 반환됨을 알 수 있었습니다.
+<br>
+그리하여 PercentEncoding을 통해 Label의 텍스트를 인코딩하여 URL로 변환할 수 있도록 처리해주었습니다.
+한글과 영어의 인코딩에 대해 고려하지않아 생긴 문제로 간단하지만 이러한 사소한 것까지 신경써야한다는 점에서 인상깊었던 문제입니다.
 
 ```swift
-// ImageOnChangeWrapper.swift
-// - pickerItem: 받아온 이미지 
-// - completionHandler: 변환 후 이미지 실어보내기
-private func getUIImage(_ pickerItem: PhotosPickerItem?, completionHandler: @escaping (UIImage) -> Void) {
-	guard let pickerItem else { return }
-	Task {
-	// 1차 변환: PhotosPickerItem => Data
-		if let imageData = try? await pickerItem.loadTransferable(type: Data.self) {
-		  // 2차 변환: Data => UIImage
-	    if let image = UIImage(data: imageData) {
-		    // Main으로 UIImage 보내기 
-         DispatchQueue.main.async {
-            completionHandler(image)
-		     }
-	     }
-   }
-	   else {
-       print("Failed Get UIImage")
-     }
-	}
-}
+guard let url = URL(string: urlTextField.text!.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!) else { return }
 ```
+<br>
 
 ---
 
+
 ### 👏 회고
 
-**- 사용자 편의성 개선**
+**- 강제 언래핑 제거**
 <br>
-사용자의 편의성을 더욱 생각하려고 노력하였던 앱이라고 생각합니다. 그리하여 출시 전후로 받은 동료분들의 피드백을 바탕으로 1차 업데이트를 진행하기도 하였습니다.  개발자이기는 하지만 언제나 사용자의 관점에서 바라보도록 더욱 노력해야할 것 같습니다. 이후에는 태그를 통한 기록 모아보기, 다크모드 대응 등 다양한 기능을 추가함으로써 앱의 활용성을 높이고 싶습니다.
+처음 만들어보는 앱인만큼 종종 강제 언래핑을 행하는 코드를 찾아볼 수 있습니다. 이는 런타임 에러를 일으킬 수 있는 문제 중 하나이기 때문에 다음 번에는 이러한 부분들을 고려하여 개발해야할 것 같습니다.
 <br>
+
+**- async/await에 대한 이해**
+<br>
+async/await 환경에 대해 제대로 알지못하고 시작한 개발이었지만 Task, continuation 등을 접하였고 개발을 하는 도중에도 비동기에 대해 고민해볼 수 있었습니다. 이후에는 GCD와 Swift Concurrency 간의 차이점과 특징 등을 공부하여 보다 명확하게 이해하고 싶습니다. 
+<br>
+
+**- 전체적인 코드 퀄리티 및 출시기간에 대한 아쉬움**
+<br>
+혼자 공부하며 앱을 만들었기때문에 제가 생각했던 것보다 전반적으로 오래 걸렸고 코드가 과하게 길어지는 경향이 있었던 것 같습니다.
+다음에는 이러한 점을 보완하여 코드의 가독성을 향상시키고 다양한 문제상황을 고려하여 일정을 계획하고 싶습니다. 
 

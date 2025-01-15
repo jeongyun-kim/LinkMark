@@ -35,11 +35,11 @@
 
 ### 👩🏼‍💻 주요 기술
 
-- UI : UIKit, Storyboard, SnapKit, Kingfisher, Lottie, Toast
-- Database : Realm
-- Reactive : Combine
-- Design Pattern: MVVM
-- etc: Link Presentation, Share Extension, Swift Concurrency, GCD
+- UI : ```UIKit```, ```Storyboard```, ```SnapKit```, ```Kingfisher```, ```Lottie```, ```Toast```
+- Database : ```Realm```
+- Reactive : ```Combine```
+- Design Pattern: ```MVVM```
+- etc: ```Link Presentation```, ```Share Extension```, ```Swift Concurrency```, ```GCD```
 
 ---
 
@@ -56,16 +56,16 @@
 
 ### 🧐 개발 포인트
 
-- 타깃(App, Share Extension) 간 Realm 데이터 공유를 위한 App Group 활용
-- CompletionHandler 기반 코드 Continuation 활용해 Concurrency 환경으로 변경
-- 공유하기를 위한 Share Extension 활용
-- 링크 제목, 썸네일을 위한 LinkPresentation 활용
-- 사용자의 이벤트 처리를 위해 Combine 활용 
-- 링크 불러오는동안 Lottie를 활용한 로딩 이미지 표출
+- 타깃(App, Share Extension) 간 Realm 데이터 공유를 위한  ```App Group``` 활용
+- CompletionHandler 기반 코드  ```Continuation``` 활용해 Concurrency 환경으로 변경
+- 공유하기를 위한  ```Share Extension``` 활용
+- 링크 제목, 썸네일을 위한  ```LinkPresentation``` 활용
+- 사용자의 이벤트 처리를 위해  ```Combine``` 활용 
+-  ```Lottie```를 활용한 명확한 이벤트 진행상황 표현 
 - 사용성 향상을 위한 필수값(링크, 제목)에 대한 검증 및 명확한 표기
-- 토스트 메시지를 이용한 이벤트 결과 피드백
+-  ```Toast```를 이용한 이벤트 결과 피드백
 - 링크 저장, 삭제 등 실시간 반영
-- 태그, 링크 목록의 레이아웃을 위한 Compositional CollectionView + Diffable DataSource 활용 
+- 태그, 링크 목록의 레이아웃을 위한  ```Compositional CollectionView + Diffable DataSource``` 활용 
 
 ---
 
@@ -75,11 +75,11 @@
 
 **- 문제점**
 <br>
-imageProvider 또는 iconProvider에서 특정 데이터 타입의 데이터를 가져오는 메서드인 loadDataRepresentation은 completionHandler로 결과값을 반환하는 함수였습니다. 하지만 받아오는 데이터를 받아와 UIImage로 변경해주는 추가적인 단계가 있어 이를 순차적으로 처리하기 위해서는 Swift Concurrency 환경의 async-await을 활용해야했습니다.
+ ```imageProvider``` 또는  ```iconProvider```에서 특정 데이터 타입의 데이터를 가져오는 메서드인  ```loadDataRepresentation```은  ```completionHandler```로 결과값을 반환하는 함수였습니다. 하지만 받아오는 데이터를 받아와  ```UIImage```로 변경해주는 추가적인 단계가 있어 이를 순차적으로 처리하기 위해서는 Swift Concurrency 환경의  ```async-await```을 활용해야했습니다.
 
 **- 해결**
 <br>
-그리하여 completionHandler를 continuation을 이용해 Concucrrency 환경으로 변경하고자 결과값과 에러를 모두 반환할 수 있는 withCheckedThrowingContinuation를 활용해주었습니다.
+그리하여  ```completionHandler```를  ```continuation```을 이용해 Concucrrency 환경으로 변경하고자 결과값과 에러를 모두 반환할 수 있는  ```withCheckedThrowingContinuation```를 활용해주었습니다.
 
 ```swift
 extension NSItemProvider {
@@ -107,7 +107,7 @@ extension NSItemProvider {
 
 **- 해결**
 <br>
-공유하기 시 떠오르는 화면이 Extension Context라는 것을 알게되었고 내부의 아이템들을 돌면서 URL을 찾고 가져와 앱에 반영해주면 되는 무제였습니다. 이 때, itemProvider의 경우 비동기적으로 작동하기 때문에 URL을 가져와 UI변화를 줄 때에 DispatchQueue.main.async를 이용해 UI 업데이트가 이루어지도록 처리하였습니다.
+공유하기 시 떠오르는 화면이  ```Extension Context```라는 것을 알게되었고 내부의 아이템들을 돌면서 URL을 찾고 가져와 앱에 반영해주면 되는 무제였습니다. 이 때,  ```itemProvider```의 경우 비동기적으로 작동하기 때문에 URL을 가져와 UI변화를 줄 때에  ```DispatchQueue.main.async```를 이용해 UI 업데이트가 이루어지도록 처리하였습니다.
 
 ```swift
 func getUrl() {
@@ -142,14 +142,14 @@ func getUrl() {
 
 **- 문제점**
 <br>
-처음에는 링크의 썸네일은 당연히 imageProvider로 불러올 수 있을거라고 생각했습니다. 하지만 어떠한 링크들의 경우, imageProvider가 아닌 iconProvider로 불러와야하는 경우들이 있었습니다.
+처음에는 링크의 썸네일은 당연히  ```imageProvider```로 불러올 수 있을거라고 생각했습니다. 하지만 어떠한 링크들의 경우,  ```imageProvider```가 아닌  ```iconProvider```로 불러와야하는 경우들이 있었습니다.
 
 **- 해결**
 <br>
-이를 고려하여 썸네일을 받아오는 단계를 단순히 imageProvider를 이용하는 것이 아닌 1차는 image, 2차는 icon 형식으로 변경해주었습니다.
+이를 고려하여 썸네일을 받아오는 단계를 단순히  ```imageProvider```를 이용하는 것이 아닌  ```1차는 image, 2차는 icon``` 형식으로 변경해주었습니다.
 <br>
 그리하여 1차적으로 메타데이터에 썸네일이 image 형태로 존재한다면 해당 단계에서 썸네일을 반영해주었고, 이 때에 썸네일이 없는 모든 경우를 에러로 분류하여 icon 형태로 받아오는 단계를 거치도록 하였습니다.
-최종적으로 iconProvider로도 썸네일을 받아오지못한다면 기본 이미지가 사용되도록 하였습니다. 
+최종적으로  ```iconProvider```로도 썸네일을 받아오지못한다면 기본 이미지가 사용되도록 하였습니다. 
 
 ```swift
 do {
@@ -184,7 +184,7 @@ URL을 입력 후 유효성 검증을 거치는 과정에서 "abc"같은 문자�
 <br>
 한글을 URL로 변환할 때 생기는 문제라고 생각하여 관련 코드에 print를 통해 디버깅을 진행하였고, 한글 또는 공백만이 포함된 경우 URL의 변환값이 nil로 반환됨을 알 수 있었습니다.
 <br>
-그리하여 PercentEncoding을 통해 Label의 텍스트를 인코딩하여 URL로 변환할 수 있도록 처리해주었습니다.
+그리하여  ```PercentEncoding```을 통해 Label의 텍스트를 인코딩하여 URL로 변환할 수 있도록 처리해주었습니다.
 한글과 영어의 인코딩에 대해 고려하지않아 생긴 문제로 간단하지만 이러한 사소한 것까지 신경써야한다는 점에서 인상깊었던 문제입니다.
 
 ```swift

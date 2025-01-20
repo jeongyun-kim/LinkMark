@@ -57,15 +57,18 @@
 ### 🧐 개발 포인트
 
 - 타깃(App, Share Extension) 간 Realm 데이터 공유를 위한  ```App Group``` 활용
-- CompletionHandler 기반 코드  ```Continuation``` 활용해 Concurrency 환경으로 변경
+- CompletionHandler 기반 코드  ```Continuation``` 활용해 Swift Concurrency 환경으로 변경
+- 비동기 처리의 가독성 향상 및 스레드 폭발 방지를 위한 ```async/await``` 활용
+- 유지보수성 향상을 위한 MVVM 패턴 활용 
 - 공유하기를 위한  ```Share Extension``` 활용
-- 링크 제목, 썸네일을 위한  ```LinkPresentation``` 활용
+- 공유된 링크 제목, 썸네일을 받아오기 위한  ```LinkPresentation``` 활용
 - 사용자의 이벤트 처리를 위해  ```Combine``` 활용 
--  ```Lottie```를 활용한 명확한 이벤트 진행상황 표현 
+-  ```Lottie```를 활용한 명확한 이벤트 진행 상태 표현 
 - 사용성 향상을 위한 필수값(링크, 제목)에 대한 검증 및 명확한 표기
--  ```Toast```를 이용한 이벤트 결과 피드백
+-  ```Toast```를 이용한 명확한 이벤트 결과 피드백
 - 링크 저장, 삭제 등 실시간 반영
-- 태그, 링크 목록의 레이아웃을 위한  ```Compositional CollectionView + Diffable DataSource``` 활용 
+- 태그, 링크 목록의 레이아웃을 위한  ```Compositional CollectionView + Diffable DataSource``` 활용
+- TestFlight를 통한 사용자 경험 개선 
 
 ---
 

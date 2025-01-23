@@ -110,7 +110,7 @@ extension NSItemProvider {
 
 **- 해결**
 <br>
-공유하기 시 떠오르는 화면이  ```Extension Context```라는 것을 알게되었고 내부의 아이템들을 돌면서 URL을 찾고 가져와 앱에 반영해주면 되는 무제였습니다. 이 때,  ```itemProvider```의 경우 비동기적으로 작동하기 때문에 URL을 가져와 UI변화를 줄 때에  ```DispatchQueue.main.async```를 이용해 UI 업데이트가 이루어지도록 처리하였습니다.
+공유하기 시 떠오르는 화면이  ```Extension Context```라는 것을 알게되었고 내부의 아이템들을 돌면서 URL을 찾고 가져와 앱에 반영해주면 되는 문제였습니다. 이 때,  ```itemProvider```의 경우 비동기적으로 작동하기 때문에 URL을 가져와 UI변화를 줄 때에  ```DispatchQueue.main.async```를 이용해 UI 업데이트가 이루어지도록 처리하였습니다.
 
 ```swift
 func getUrl() {

@@ -68,7 +68,7 @@
 -  ```Toast```를 이용한 명확한 이벤트 결과 피드백
 - 링크 저장, 삭제 등 실시간 반영
 - 태그, 링크 목록의 레이아웃을 위한  ```Compositional CollectionView + Diffable DataSource``` 활용
-- TestFlight를 통한 사용자 경험 개선 
+- TestFlight를 통한 사용자 경험 개선  
 
 ---
 

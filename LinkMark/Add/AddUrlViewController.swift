@@ -200,20 +200,17 @@ class AddUrlViewController:  UIViewController {
                             let thumbnail = try await LPLoader().thumbnail(metadata: metadata)
                             self.thumbnailImageView.image = thumbnail
                         } catch {
-                            switch error {
-                            default:
-                                do {
-                                    let icon = try await LPLoader().favicon(metadata: metadata)
-                                    self.thumbnailImageView.image = icon
-                                } catch {
-                                    switch error {
-                                    case LPLoaderCase.faviconCouldNotBeLoaded:
-                                        ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
-                                    case LPLoaderCase.faviconDataInvalid:
-                                        ms.alert(for: "불러올 썸네일이 없어요", vc: self)
-                                    default:
-                                        ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
-                                    }
+                            do {
+                                let icon = try await LPLoader().favicon(metadata: metadata)
+                                self.thumbnailImageView.image = icon
+                            } catch {
+                                switch error {
+                                case LPLoaderCase.faviconCouldNotBeLoaded:
+                                    ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
+                                case LPLoaderCase.faviconDataInvalid:
+                                    ms.alert(for: "불러올 썸네일이 없어요", vc: self)
+                                default:
+                                    ms.alert(for: "썸네일을 불러올 수 없어요", vc: self)
                                 }
                             }
                         }
